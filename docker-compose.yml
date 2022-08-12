@@ -7,17 +7,21 @@ services:
   traefik:
     image: 'traefik:v2.6'
     container_name: 'traefik'
-    command:
-      - --log.level=DEBUG
-      - --api.insecure=true
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
-      - --providers.docker.exposedbydefault=false
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     ports:
       - '80:80'
+      - '443:443'
       - '8080:8080'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Map the static configuration into the container
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      # Map the dynamic configuration into the container
+      - ./traefik.dynamic.yml:/etc/traefik/dynamic.yml:ro
+      # Map the certificats into the container
+      - ./certs:/etc/certs:ro
     networks:
       - net01
   code-server:
@@ -33,7 +37,8 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=proxy'
       - 'traefik.http.routers.code-server.rule=HostRegexp(`code.local`)'
-      - 'traefik.http.routers.code-server.entrypoints=web'
+      - 'traefik.http.routers.code-server.entrypoints=websecure'
+      - 'traefik.http.routers.code-server.tls=true'
       - 'traefik.http.services.code-server.loadbalancer.server.port=8443'
     restart: unless-stopped
     depends_on:
@@ -54,7 +59,8 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=proxy'
       - 'traefik.http.routers.h1.rule=Host(`h1.local`)'
-      - 'traefik.http.routers.h1.entrypoints=web'
+      - 'traefik.http.routers.h1.entrypoints=websecure'
+      - 'traefik.http.routers.h1.tls=true'
       - 'traefik.http.services.h1.loadbalancer.server.port=80'
     networks:
       - net01
@@ -72,7 +78,8 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=proxy'
       - 'traefik.http.routers.h2.rule=Host(`h2.local`)'
-      - 'traefik.http.routers.h2.entrypoints=web'
+      - 'traefik.http.routers.h2.entrypoints=websecure'
+      - 'traefik.http.routers.h2.tls=true'
       - 'traefik.http.services.h2.loadbalancer.server.port=80'
     networks:
       - net01
