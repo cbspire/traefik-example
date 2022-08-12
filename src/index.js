@@ -1,11 +1,14 @@
 const express = require('express')
+const fs = require('fs')
 const app = express()
 const port = 80
 
 const appName = process.env.APP_NAME;
 
 app.get('/', (req, res) => {
-  res.send(`Hello from ${appName}\n\n`)
+  const content = fs.readFileSync('content.txt', 'UTF-8')
+
+  res.send(`Hello from ${appName}\n${content}\n`)
 })
 
 app.listen(port, () => {

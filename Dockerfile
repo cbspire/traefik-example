@@ -12,17 +12,17 @@ RUN rc-update add sshd \
     && touch /run/openrc/softlevel \
     && sed -ie "s/#PasswordAuthentication yes/PasswordAuthentication yes/g" /etc/ssh/sshd_config
 
-RUN mkdir /app 
+ 
 RUN addgroup user -g 1000 && adduser user -G user -D && \
-    chown user:user -R /app && \
-    echo "user:password" | chpasswd
+    echo "user:password" | chpasswd && \
+    mkdir /home/user/app
 
-WORKDIR /app
+WORKDIR /home/user/app
 
-COPY src/package*.json /app/
-COPY src/run.js /app/
+COPY src/* .
+RUN touch /home/user/app/content.txt && chown -R user:user /home/user/app
 
-RUN npm ci
 
-EXPOSE 8080
-CMD ["sh","-c", "rc-status; rc-service sshd start; node /app/run.js"]
+RUN npm i
+
+CMD ["sh","-c", "rc-status; rc-service sshd start; node /home/user/app/index.js"]
