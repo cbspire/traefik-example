@@ -1,6 +1,12 @@
 # traefik-example
 
-Aim of this repository is to describe and test how to connect multiple containers under traefik.
+Aim of this repository is to describe and test how to connectand reach containers under traefik
+
+## Use cases
+[x] internal HTTP with local name
+[x] internal SSH
+[] using with code-server via web (require local HTTPS)
+[] http with traefik host
 
 # Setup
 
@@ -11,18 +17,17 @@ sudo ./set-hosts.sh
 docker-compose up -d
 ```
 
-## Traefik
-
-Traekif is exposed on :80 port and you can check the dasbhaord at http://localhost:8080.
-
-2 docker contaienrs are exposed to
-
+## Exposed hosts
+- http://code.local
 - http://h1.local
 - http://h2.local
 
-## Usage
+## SSH access
+Username: user
+Password: password
 
-Login into one of the 2 available container2 via docker and test the HTTP call to the other container
+# Internal HTTP with local name
+Login into one of the 2 available container via docker and test the HTTP call to the other container
 
 ```
 docker-compose exec -it h1 bash
@@ -31,12 +36,18 @@ curl h2
 
 Output must be
 ```
-Hello h2
+Hello from h2
 ```
 
+# Internal SSH with local name
+Login into one of the 2 available container via docker and test the SSH call to the other container
 
-# Next steps: make curl available if possible also for
-
-````
+```
 docker-compose exec -it h1 bash
-curl http://h2.local
+ssh user@h2
+```
+
+Output must be
+```
+Hello from h2
+```

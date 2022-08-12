@@ -1,0 +1,11 @@
+FROM lscr.io/linuxserver/code-server:latest
+
+RUN apt-get install -y openssh-client git nano curl
+
+RUN /app/code-server/bin/code-server \
+    --extensions-dir /config/extensions/ \
+    --install-extension EdgardMessias.clipboard-manager \
+    --install-extension mikestead.dotenv \
+    --install-extension formulahendry.terminal \
+    --install-extension vscode-icons-team.vscode-icons
+    

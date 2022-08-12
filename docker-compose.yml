@@ -20,6 +20,26 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - net01
+  code-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.code
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=proxy'
+      - 'traefik.http.routers.code-server.rule=HostRegexp(`code.local`)'
+      - 'traefik.http.routers.code-server.entrypoints=web'
+      - 'traefik.http.services.code-server.loadbalancer.server.port=8443'
+    restart: unless-stopped
+    depends_on:
+      - traefik
+    networks:
+      - net01
   h1:
     build:
       context: .
@@ -27,6 +47,7 @@ services:
         - NAME=h1
     container_name: 'h1'
     tty: true
+    stdin_open: true
     depends_on:
       - traefik
     labels:
@@ -44,6 +65,7 @@ services:
         - NAME=h2
     container_name: 'h2'
     tty: true
+    stdin_open: true
     depends_on:
       - traefik
     labels:
