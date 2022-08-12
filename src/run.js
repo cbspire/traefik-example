@@ -5,7 +5,7 @@ const port = 80
 const appName = process.env.APP_NAME;
 
 app.get('/', (req, res) => {
-  res.send(`Hello ${appName}\n\n`)
+  res.send(`Hello from ${appName}\n\n`)
 })
 
 app.listen(port, () => {

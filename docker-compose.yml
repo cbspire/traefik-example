@@ -35,8 +35,6 @@ services:
       - 'traefik.http.routers.h1.rule=Host(`h1.local`)'
       - 'traefik.http.routers.h1.entrypoints=web'
       - 'traefik.http.services.h1.loadbalancer.server.port=80'
-    volumes:
-      - ./src:/app
     networks:
       - net01
   h2:
@@ -54,7 +52,5 @@ services:
       - 'traefik.http.routers.h2.rule=Host(`h2.local`)'
       - 'traefik.http.routers.h2.entrypoints=web'
       - 'traefik.http.services.h2.loadbalancer.server.port=80'
-    volumes:
-      - ./src:/app
     networks:
       - net01
